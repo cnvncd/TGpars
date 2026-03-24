@@ -1,0 +1,17 @@
+[Unit]
+Description=Telegram Mirror Bot
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+WorkingDirectory=/path/to/парсер_v4
+Environment="PATH=/path/to/парсер_v4/venv/bin"
+ExecStart=/path/to/парсер_v4/venv/bin/python3 mirror_userbot.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/path/to/парсер_v4/log.txt
+StandardError=append:/path/to/парсер_v4/log.txt
+
+[Install]
+WantedBy=multi-user.target
