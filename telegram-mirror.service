@@ -5,13 +5,13 @@ After=network.target
 [Service]
 Type=simple
 User=YOUR_USERNAME
-WorkingDirectory=/path/to/парсер_v4
-Environment="PATH=/path/to/парсер_v4/venv/bin"
-ExecStart=/path/to/парсер_v4/venv/bin/python3 mirror_userbot.py
+WorkingDirectory=/home/YOUR_USERNAME/tgparsnurxa
+Environment="PATH=/home/YOUR_USERNAME/tgparsnurxa/venv/bin"
+ExecStart=/home/YOUR_USERNAME/tgparsnurxa/venv/bin/python3 mirror_userbot.py
 Restart=always
 RestartSec=10
-StandardOutput=append:/path/to/парсер_v4/log.txt
-StandardError=append:/path/to/парсер_v4/log.txt
+StandardOutput=append:/home/YOUR_USERNAME/tgparsnurxa/log.txt
+StandardError=append:/home/YOUR_USERNAME/tgparsnurxa/log.txt
 
 [Install]
 WantedBy=multi-user.target
