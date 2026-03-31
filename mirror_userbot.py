@@ -25,6 +25,7 @@ from telethon.tl.types import (
     MessageMediaPhoto,
     MessageMediaDocument,
     MessageMediaPoll,
+    MessageMediaWebPage,
     DocumentAttributeVideo,
     DocumentAttributeAudio,
     DocumentAttributeAnimated,
@@ -297,6 +298,9 @@ def media_kind(msg: Message) -> str:
     if not msg.media:
         return "text"
     m = msg.media
+    # Веб-превью обрабатываем как текст, чтобы Telegram сам создал новое превью
+    if isinstance(m, MessageMediaWebPage):
+        return "text"
     if isinstance(m, MessageMediaPhoto):
         return "photo"
     if isinstance(m, MessageMediaDocument):
@@ -701,13 +705,16 @@ async def copy_message(client, msg: Message, target) -> Optional[Message]:
         if not out:
             cap = replace_links(raw_text) if raw_text else None
             ce = sanitize_entities(ents, cap or "")
-            if msg.media:
+            # Проверяем, есть ли веб-превью
+            has_webpage = isinstance(getattr(msg, "media", None), MessageMediaWebPage)
+            if msg.media and not has_webpage:
                 out = await send_media_ref(client, msg, target, cap, ce, buttons, kind)
                 if not out:
                     out = await send_media_bytes(
                         client, msg, target, cap, ce, buttons, kind
                     )
             else:
+                # Для текста и веб-превью отправляем как обычное сообщение
                 nt = replace_links(raw_text) or " "
                 ne = sanitize_entities(ents, nt)
                 try:
@@ -717,6 +724,7 @@ async def copy_message(client, msg: Message, target) -> Optional[Message]:
                             message=nt,
                             formatting_entities=ne,
                             buttons=buttons,
+                            link_preview=True,  # Включаем превью для новой ссылки
                         )
                     )
                 except Exception as e:
